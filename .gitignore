@@ -3,3 +3,9 @@
 ################################################################################
 
 /.vs
+/TMM.API/bin/Debug/net7.0
+/TMM.API/obj
+/TMM.Database/bin/Debug/net7.0
+/TMM.Database/obj
+/TMM.Logic/bin/Debug/net7.0
+/TMM.Logic/obj

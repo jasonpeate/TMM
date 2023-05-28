@@ -1,0 +1,21 @@
+Postman scripts
+
+.Net core, Specifies Core no .net 5 / 6 / 7 / 8
+
+Postman Scripts
+
+Web API Support the management of customers & Addresses
+
+Customer can only exist once in database, Based on First Name Last Name?
+
+Customer can only exist once - Base on Name
+Customer can have many addresses, but is required to have at least one
+Customer is requried to have a Main Address, Secondrary address can be converted to Main Address
+Customer can be marked as inactive, Should not be returned in active query
+
+Customer can be deleted
+If deleted, then all addresses can deleted
+
+All customers can be returned
+
+All Active customers can be retutned 

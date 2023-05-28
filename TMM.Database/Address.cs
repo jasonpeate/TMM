@@ -5,7 +5,7 @@ namespace TMM.Database
 {
     public class Address
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public int CustomerId { get; set; }

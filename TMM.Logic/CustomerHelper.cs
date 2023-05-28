@@ -13,10 +13,17 @@ namespace TMM.Logic
 
             return db.Customers;
         }
+
+        public Customer GetCustomer(TMMDbContext db, int ID)
+        {      
+
+            return db.Customers.Single(a => a.Id == ID);
+        }
     }
 
     public interface ICustomerHelper
     {
         IEnumerable<Customer> GetCustomers(TMMDbContext db, bool ActiveOnly);
+        Customer GetCustomer(TMMDbContext db, int ID);
     }
 }

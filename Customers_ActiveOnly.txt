@@ -1,0 +1,8 @@
+http://localhost:5100/Customers/ActiveOnly
+
+pm.test("Status & Count Test", function () {
+    pm.response.to.have.status(200);
+      const responseJson = pm.response.json();
+       pm.expect(responseJson.length).to.eql(2);
+});
+

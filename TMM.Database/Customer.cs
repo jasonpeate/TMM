@@ -23,7 +23,8 @@ namespace TMM.Database
         public string SureName { get; set; }
 
         [Required]
-        [StringLength(75)] //TODO : Regex Validation
+        [StringLength(75)]
+        [RegularExpression(Constants.EmailRegex)]
         public string EmailAddress { get; set; }
 
         [Required]

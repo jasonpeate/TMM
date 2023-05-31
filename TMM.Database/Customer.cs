@@ -11,7 +11,7 @@ namespace TMM.Database
         public int Id { get; set; }
 
         [Required]
-        [StringLength(20)] //TODO : Should be a lookup
+        [StringLength(20)] //TODO : Should be a lookup in its own sql table
         public string Title { get; set; }
 
         [Required]

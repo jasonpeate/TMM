@@ -19,9 +19,6 @@ namespace TMM.Database
             modelBuilder.Entity<Customer>()
                 .HasAlternateKey(a => new { a.Forename, a.SureName });
 
-            //modelBuilder.Entity<Address>()
-            //    .Property(b => b.Country).HasDefaultValue("UK");
-
         }
 
         public void InitData()

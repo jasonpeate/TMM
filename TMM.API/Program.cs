@@ -1,11 +1,8 @@
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using TMM.Database;
 using TMM.Logic;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<TMMDbContext>(opt => opt.UseInMemoryDatabase("TMM"), ServiceLifetime.Singleton);
+builder.Services.AddDbContext<ITMMDbContext,RealWorldDB>(ServiceLifetime.Singleton);
 builder.Services.AddSingleton<ICustomerHelper, CustomerHelper>();
 // Add services to the container.
 
@@ -15,6 +12,21 @@ var app = builder.Build();
 app.MapGet("/Customers", async (ICustomerHelper ch) =>
 {
     return Results.Ok(ch.GetCustomers(false));
+});
+
+app.MapPost("/Customers/Add", async (CompleteCustomerModel data,ICustomerHelper ch) =>
+{
+    var _result = ch.AddCustomer(data);
+
+    if (_result.Result)
+    {
+        return Results.Ok(_result.ID);
+    }
+    else
+    {
+        //TODO : return status code needs to be better here
+        return Results.Problem(statusCode: 500, detail: _result.Message);
+    }
 });
 
 app.MapGet("/Customers/ActiveOnly", async (ICustomerHelper ch) =>

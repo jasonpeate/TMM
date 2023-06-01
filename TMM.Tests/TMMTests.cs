@@ -11,7 +11,7 @@ namespace TMM.Tests
         public void GetAllCustomersReturnsCorrectData()
         {
             //arrange
-            TMMDbContext db = GetDB();
+            InMemoryTestDB db = GetDB();
 
             ICustomerHelper ic = new CustomerHelper(db);
 
@@ -26,7 +26,7 @@ namespace TMM.Tests
         public void GetActiveCustomersReturnsCorrectData()
         {
             //arrange
-            TMMDbContext db = GetDB();
+            InMemoryTestDB db = GetDB();
 
             ICustomerHelper ic = new CustomerHelper(db);
 
@@ -41,7 +41,7 @@ namespace TMM.Tests
         public void DeleteAddressReturnsErrorIfBadCustomerIDPassedIn()
         {
             //arrange
-            TMMDbContext db = GetDB();
+            InMemoryTestDB db = GetDB();
 
             ICustomerHelper ic = new CustomerHelper(db);
 
@@ -57,7 +57,7 @@ namespace TMM.Tests
         public void DeleteAddressReturnsErrorIfGoodCustomerIDAndBadAddressIDPassedIn()
         {
             //arrange
-            TMMDbContext db = GetDB();
+            InMemoryTestDB db = GetDB();
 
             ICustomerHelper ic = new CustomerHelper(db);
 
@@ -73,7 +73,7 @@ namespace TMM.Tests
         public void DeleteAddress_Works()
         {
             //arrange
-            TMMDbContext db = GetDB();
+            InMemoryTestDB db = GetDB();
 
             ICustomerHelper ic = new CustomerHelper(db);
 
@@ -97,13 +97,13 @@ namespace TMM.Tests
             Assert.AreEqual(1,db.Addresses.Count(a => a.CustomerId == toDeleteCustomer_Address.Id && a.MainAddress));
         }
 
-        private TMMDbContext GetDB()
+        private InMemoryTestDB GetDB()
         {
-            DbContextOptionsBuilder<TMMDbContext> x = new DbContextOptionsBuilder<TMMDbContext>();
+            DbContextOptionsBuilder<InMemoryTestDB> x = new DbContextOptionsBuilder<InMemoryTestDB>();
 
             x.UseInMemoryDatabase("TMMM");
 
-            return new TMMDbContext(x.Options);
+            return new InMemoryTestDB(x.Options);
         }
     }
 }

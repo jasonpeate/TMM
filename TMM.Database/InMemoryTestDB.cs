@@ -2,10 +2,10 @@
 
 namespace TMM.Database
 {
-    public class TMMDbContext : DbContext
+    public class InMemoryTestDB : DbContext, ITMMDbContext
     {
-        public TMMDbContext(DbContextOptions<TMMDbContext> options)
-  : base(options) 
+        public InMemoryTestDB()
+  : base(GetDB()) 
         {
 
         }
@@ -19,6 +19,11 @@ namespace TMM.Database
             modelBuilder.Entity<Customer>()
                 .HasAlternateKey(a => new { a.Forename, a.SureName });
 
+        }
+
+        private static DbContextOptions<InMemoryTestDB> GetDB()
+        {
+            return new DbContextOptionsBuilder<InMemoryTestDB>().UseInMemoryDatabase("TMMM").Options;
         }
 
         public void InitData()

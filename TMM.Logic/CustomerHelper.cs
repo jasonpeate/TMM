@@ -1,16 +1,78 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using TMM.Database;
 
 namespace TMM.Logic
 {
     public class CustomerHelper : ICustomerHelper
     {
-        private TMMDbContext db;
+        private ITMMDbContext db;
 
-        public CustomerHelper(TMMDbContext db)
+        public CustomerHelper(ITMMDbContext db)
         {
             this.db = db;
-            this.db.InitData();
+        }
+
+        public (bool Result, string Message, int ID) AddCustomer(CompleteCustomerModel customerModel)
+        {
+            List<string> Messages = new();
+
+            if (Validate())
+            {
+                Customer customer = new()
+                {
+                    Title = customerModel.Title,
+                    Forename = customerModel.Forename,
+                    SureName = customerModel.SureName,
+                    EmailAddress = customerModel.EmailAddress,
+                    MobileNo = customerModel.MobileNo,
+                    Active = true,
+                    Addresses = new List<Address>()
+                };
+
+                foreach (CompleteAddressModel _add in customerModel.Addresses)
+                {
+                    customer.Addresses.Add(new Address()
+                    {
+                         AddressLine1 = _add.AddressLine1,
+                         Country = _add.Country,
+                         County = _add.County,
+                         Postcode = _add.Postcode,
+                         Town = _add.Town,
+                         MainAddress = _add.MainAddress                         
+                    });
+                }
+
+                db.Customers.Add(customer);
+
+                int Result = db.SaveChanges();
+
+                return (true, "Customer Added", Result);
+            }
+
+            return (false, string.Join("|",Messages), -1);
+            
+            bool Validate()
+            {
+
+                if (db.Customers.Any(a => a.Forename == customerModel.Forename && a.SureName == customerModel.SureName))
+                {
+                    Messages.Add("Customer Already Exists");                    
+                }
+
+                if (!customerModel.Addresses?.Any() ?? false)
+                {
+                    Messages.Add("Customer is required to have at lease one address");
+                } 
+                else if (customerModel.Addresses.Count(a => a.MainAddress) != 1)
+                {
+                    Messages.Add("Customer is required to have only 1 main address");
+                }
+
+                //TODO : complete email address, Mobile No, null checks
+
+                return Messages.Count == 0;  
+            }
         }
 
         public IEnumerable<Customer> GetCustomers(bool ActiveOnly)
@@ -128,6 +190,7 @@ namespace TMM.Logic
 
     public interface ICustomerHelper
     {
+        (bool Result, string Message, int ID) AddCustomer(CompleteCustomerModel customerModel);
         IEnumerable<Customer> GetCustomers(bool ActiveOnly);
         Customer GetCustomer(int ID);
         (bool Result, string Message) DeleteAddress(int CustomerID, int AddressID);

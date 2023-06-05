@@ -1,15 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Xml.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TMM.Database
 {
-    public class Customer
+    public class Customer : EntityBase
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
         [Required]
         [StringLength(20)] //TODO : Should be a lookup in its own sql table
         public string Title { get; set; }

@@ -1,18 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace TMM.Database
 {
-    public class Address
+    public class Address : EntityBase
     {
         public Address()
         {
             Country = "UK"; //TODO : move to database level
         }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
 
         public int CustomerId { get; set; }
 

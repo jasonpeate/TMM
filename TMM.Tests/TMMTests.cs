@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using TMM.Database;
 using TMM.Logic;
 
@@ -11,9 +10,7 @@ namespace TMM.Tests
         public void GetAllCustomersReturnsCorrectData()
         {
             //arrange
-            InMemoryTestDB db = GetDB();
-
-            ICustomerHelper ic = new CustomerHelper(db);
+            ICustomerService ic = GetCustomerService(out ITMMDbContext db);
 
             //act 
             IEnumerable<Customer> allCustomers = ic.GetCustomers(false);
@@ -26,9 +23,7 @@ namespace TMM.Tests
         public void GetActiveCustomersReturnsCorrectData()
         {
             //arrange
-            InMemoryTestDB db = GetDB();
-
-            ICustomerHelper ic = new CustomerHelper(db);
+            ICustomerService ic = GetCustomerService(out ITMMDbContext db);
 
             //act 
             IEnumerable<Customer> allCustomers = ic.GetCustomers(true);
@@ -41,12 +36,10 @@ namespace TMM.Tests
         public void DeleteAddressReturnsErrorIfBadCustomerIDPassedIn()
         {
             //arrange
-            InMemoryTestDB db = GetDB();
-
-            ICustomerHelper ic = new CustomerHelper(db);
+            ICustomerService ic = GetCustomerService(out ITMMDbContext db);
 
             //act 
-            (bool Result, string Message) _result = ic.DeleteAddress(99,44);
+            ReponseResult _result = ic.DeleteAddress(99,44);
 
             //assert
             Assert.IsFalse(_result.Result);
@@ -57,12 +50,10 @@ namespace TMM.Tests
         public void DeleteAddressReturnsErrorIfGoodCustomerIDAndBadAddressIDPassedIn()
         {
             //arrange
-            InMemoryTestDB db = GetDB();
-
-            ICustomerHelper ic = new CustomerHelper(db);
+            ICustomerService ic = GetCustomerService(out ITMMDbContext db);
 
             //act 
-            (bool Result, string Message) _result = ic.DeleteAddress(1, 44);
+            ReponseResult _result = ic.DeleteAddress(1, 44);
 
             //assert
             Assert.IsFalse(_result.Result);
@@ -73,15 +64,13 @@ namespace TMM.Tests
         public void DeleteAddress_Works()
         {
             //arrange
-            InMemoryTestDB db = GetDB();
-
-            ICustomerHelper ic = new CustomerHelper(db);
+            ICustomerService ic = GetCustomerService(out ITMMDbContext db);
 
             //act 
             Customer toDeleteCustomer_Address = db.Customers.First();
             Address toDelete_Address = toDeleteCustomer_Address.Addresses.First();
 
-            (bool Result, string Message) _result = ic.DeleteAddress(toDeleteCustomer_Address.Id, toDelete_Address.Id);
+            ReponseResult _result = ic.DeleteAddress(toDeleteCustomer_Address.Id, toDelete_Address.Id);
 
             //assert
 
@@ -97,13 +86,13 @@ namespace TMM.Tests
             Assert.AreEqual(1,db.Addresses.Count(a => a.CustomerId == toDeleteCustomer_Address.Id && a.MainAddress));
         }
 
-        private InMemoryTestDB GetDB()
+        private ICustomerService GetCustomerService(out ITMMDbContext db)
         {
-            DbContextOptionsBuilder<InMemoryTestDB> x = new DbContextOptionsBuilder<InMemoryTestDB>();
+            db = new InMemoryTestDB();
 
-            x.UseInMemoryDatabase("TMMM");
+            return new CustomerService(new CustomerRepository(db), new AddressRepository(db));
 
-            return new InMemoryTestDB(x.Options);
+      
         }
     }
 }

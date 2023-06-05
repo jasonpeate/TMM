@@ -3,18 +3,20 @@ using TMM.Logic;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ITMMDbContext,RealWorldDB>(ServiceLifetime.Singleton);
-builder.Services.AddSingleton<ICustomerHelper, CustomerHelper>();
-// Add services to the container.
+builder.Services.AddTransient<CustomerRepository>();
+builder.Services.AddTransient<AddressRepository>();
+builder.Services.AddTransient<ICustomerService, CustomerService>();
+
 
 var app = builder.Build();
 
 
-app.MapGet("/Customers", async (ICustomerHelper ch) =>
+app.MapGet("/Customers", async (ICustomerService ch) =>
 {
     return Results.Ok(ch.GetCustomers(false));
 });
 
-app.MapPost("/Customers/Add", async (CompleteCustomerModel data,ICustomerHelper ch) =>
+app.MapPost("/Customers/Add", async (CompleteCustomerModel data, ICustomerService ch) =>
 {
     var _result = ch.AddCustomer(data);
 
@@ -29,19 +31,19 @@ app.MapPost("/Customers/Add", async (CompleteCustomerModel data,ICustomerHelper 
     }
 });
 
-app.MapGet("/Customers/ActiveOnly", async (ICustomerHelper ch) =>
+app.MapGet("/Customers/ActiveOnly", async (ICustomerService ch) =>
 {
     return Results.Ok(ch.GetCustomers(true));
 });
 
-app.MapGet("/Customer", async (int ID, ICustomerHelper ch) =>
+app.MapGet("/Customer", async (int ID, ICustomerService ch) =>
 {
     return Results.Ok(ch.GetCustomer(ID));
 });
 
-app.MapDelete("/Customer/DeleteAddress", async (int CustomerID, int AddressID, ICustomerHelper ch) =>
+app.MapDelete("/Customer/DeleteAddress", async (int CustomerID, int AddressID, ICustomerService ch) =>
 {
-    (bool Result, string Message) result = ch.DeleteAddress(CustomerID, AddressID);
+    ReponseResult result = ch.DeleteAddress(CustomerID, AddressID);
 
     if (result.Result)
     {
@@ -54,9 +56,9 @@ app.MapDelete("/Customer/DeleteAddress", async (int CustomerID, int AddressID, I
     }    
 });
 
-app.MapPut("/Customer/UpdateMainAddress", async (int CustomerID, int AddressID, ICustomerHelper ch) =>
+app.MapPut("/Customer/UpdateMainAddress", async (int CustomerID, int AddressID, ICustomerService ch) =>
 {
-    (bool Result, string Message) result = ch.SetMainAddress(CustomerID, AddressID);
+    ReponseResult result = ch.SetMainAddress(CustomerID, AddressID);
 
     if (result.Result)
     {
@@ -69,9 +71,9 @@ app.MapPut("/Customer/UpdateMainAddress", async (int CustomerID, int AddressID, 
     }
 });
 
-app.MapPut("/Customer/MarkAsInactive", async (int CustomerID, ICustomerHelper ch) =>
+app.MapPut("/Customer/MarkAsInactive", async (int CustomerID, ICustomerService ch) =>
 {
-    (bool Result, string Message) result = ch.MarkCustomerAsInactive(CustomerID);
+    ReponseResult result = ch.MarkCustomerAsInactive(CustomerID);
 
     if (result.Result)
     {
@@ -84,9 +86,9 @@ app.MapPut("/Customer/MarkAsInactive", async (int CustomerID, ICustomerHelper ch
     }
 });
 
-app.MapDelete("/Customer/Delete", async (int CustomerID, ICustomerHelper ch) =>
+app.MapDelete("/Customer/Delete", async (int CustomerID, ICustomerService ch) =>
 {
-    (bool Result, string Message) result = ch.DeleteCustomer(CustomerID);
+    ReponseResult result = ch.DeleteCustomer(CustomerID);
 
     if (result.Result)
     {

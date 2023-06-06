@@ -1,3 +1,4 @@
+using NLog;
 using TMM.Database;
 using TMM.Logic;
 
@@ -5,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ITMMDbContext,RealWorldDB>(ServiceLifetime.Singleton);
 builder.Services.AddTransient<CustomerRepository>();
 builder.Services.AddTransient<AddressRepository>();
+builder.Services.AddTransient<NLog.ILogger>(a => LogManager.GetCurrentClassLogger());
 builder.Services.AddTransient<ICustomerService, CustomerService>();
 
 

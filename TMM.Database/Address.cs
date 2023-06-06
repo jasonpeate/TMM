@@ -9,7 +9,6 @@ namespace TMM.Database
         {
             Country = "UK"; //TODO : move to database level
         }
-
         public int CustomerId { get; set; }
 
         [JsonIgnore]

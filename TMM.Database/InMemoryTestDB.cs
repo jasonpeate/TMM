@@ -7,7 +7,7 @@ namespace TMM.Database
         public InMemoryTestDB()
   : base(GetDB()) 
         {
-
+            InitData();
         }
 
         public DbSet<Customer> Customers { get; set; }

@@ -1,3 +1,5 @@
+using NLog;
+using NLog.Targets;
 using TMM.Database;
 using TMM.Logic;
 
@@ -53,7 +55,7 @@ namespace TMM.Tests
             ICustomerService ic = GetCustomerService(out ITMMDbContext db);
 
             //act 
-            ReponseResult _result = ic.DeleteAddress(1, 44);
+            ReponseResult _result = ic.DeleteAddress(1, 6500); // known to be out the range
 
             //assert
             Assert.IsFalse(_result.Result);
@@ -76,7 +78,7 @@ namespace TMM.Tests
 
             // Result is correct
             Assert.IsTrue(_result.Result);
-            Assert.AreEqual("Address Deleted", _result.Message);
+            Assert.AreEqual("Success", _result.Message);
             
 
             // Address is delete
@@ -86,11 +88,55 @@ namespace TMM.Tests
             Assert.AreEqual(1,db.Addresses.Count(a => a.CustomerId == toDeleteCustomer_Address.Id && a.MainAddress));
         }
 
+        [TestMethod]
+        public void DeleteCustomer_ValidationFailed_InvalidCustomerID()
+        {
+            //arrange
+            ICustomerService ic = GetCustomerService(out ITMMDbContext db);
+
+            //act 
+            ReponseResult _result = ic.DeleteCustomer(9999);
+
+            //assert
+
+            // Result is correct
+            Assert.IsFalse(_result.Result);
+            Assert.AreEqual("Invalid CustomerID Passed in", _result.Message);
+
+        }
+
+        [TestMethod]
+        public void DeleteCustomer_Works()
+        {
+            //arrange
+            ICustomerService ic = GetCustomerService(out ITMMDbContext db);
+
+            //act 
+            Random ra = new();
+            int toDelete = ra.Next(db.Customers.Count());
+
+            Customer toDelte = db.Customers.Single(a => a.Id == toDelete); 
+            
+            int[] addressDeletedIDS = toDelte.Addresses.Select(a => a.Id).ToArray();
+
+            ReponseResult _result = ic.DeleteCustomer(toDelte.Id);
+
+            //assert
+
+            // Result is correct
+            Assert.IsTrue(_result.Result);
+            Assert.AreEqual("Success", _result.Message);
+
+            Assert.IsFalse(db.Addresses.Where(a => addressDeletedIDS.Contains(a.Id)).Any());
+            Assert.IsNull(db.Customers.SingleOrDefault(a => a.Id == toDelete));
+
+        }
+
         private ICustomerService GetCustomerService(out ITMMDbContext db)
         {
             db = new InMemoryTestDB();
 
-            return new CustomerService(new CustomerRepository(db), new AddressRepository(db));
+            return new CustomerService(new CustomerRepository(db), new AddressRepository(db), LogManager.GetCurrentClassLogger());
 
       
         }

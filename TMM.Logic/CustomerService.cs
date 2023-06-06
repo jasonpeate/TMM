@@ -1,4 +1,5 @@
-﻿using TMM.Database;
+﻿using NLog;
+using TMM.Database;
 
 namespace TMM.Logic
 {
@@ -6,11 +7,13 @@ namespace TMM.Logic
     {
         private CustomerRepository customerRepository;
         private AddressRepository addressRepository;
+        private ILogger logger;
 
-        public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository)
+        public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository, ILogger logger)
         {
             this.customerRepository = customerRepository;
             this.addressRepository = addressRepository;
+            this.logger = logger;
         }
 
         public ReponseResult AddCustomer(CompleteCustomerModel customerModel)
@@ -52,7 +55,7 @@ namespace TMM.Logic
             }
             catch (Exception ex)
             {
-                //TODO : log here
+                this.logger.Error(ex);
                 return ReponseResult.Exception(ex);
             }
 
@@ -93,7 +96,7 @@ namespace TMM.Logic
             }
             catch (Exception ex)
             {
-                //TODO : log here
+                this.logger.Error(ex);
                 return null;
             }
         }
@@ -106,7 +109,7 @@ namespace TMM.Logic
             }
             catch (Exception ex)
             {
-                //TODO : log here
+                this.logger.Error(ex);
                 return null;
             }
         }
@@ -136,7 +139,7 @@ namespace TMM.Logic
             }
             catch (Exception ex)
             {
-                //TODO : log here
+                this.logger.Error(ex);
                 return ReponseResult.Exception(ex);
             }
 
@@ -189,7 +192,7 @@ namespace TMM.Logic
             }
             catch (Exception ex)
             {
-                //TODO : log here
+                this.logger.Error(ex);
                 return ReponseResult.Exception(ex);
             }
 
@@ -231,7 +234,7 @@ namespace TMM.Logic
             }
             catch (Exception ex)
             {
-                //TODO : log here
+                this.logger.Error(ex);
                 return ReponseResult.Exception(ex);
             }
 
@@ -257,7 +260,7 @@ namespace TMM.Logic
             }
             catch (Exception ex)
             {
-                //TODO : log here
+                this.logger.Error(ex);
                 return ReponseResult.Exception(ex);
             }
         }
